@@ -57,6 +57,15 @@
             align-items: center;
             display: flex;
         }
+        footer {
+            text-align: center;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: black;
+            margin-top: 3%;
+            color: purple;
+            text-decoration: underline;
+            font-size: 40px;
+        }
     </style>
 </head>
     <body>
@@ -76,6 +85,8 @@
 
         <p id="timer" class="timing">00:00</p>
         </main>
+        <footer>On t'avais(pas)dit que ce jeu était vraiment (pas) génial (ni fini) !
+            Espèce de sale singe troglodyte à croire que les reptiliens existent !</footer>
 </body>
 <script language="JavaScript">
     m='m'; //représente un mur
@@ -157,6 +168,7 @@
         const timerElement = document.getElementById("timer")
 
         setInterval(() => {
+            temps = temps <= 0 ? 0 : temps + 1
         let minutes = parseInt(temps / 60, 10)
         let secondes = parseInt(temps % 60, 10)
 
@@ -164,7 +176,6 @@
         secondes = secondes < 10 ? "0" + secondes : secondes
 
         timerElement.innerText = `${minutes}:${secondes}`
-        temps = temps <= 0 ? 0 : temps + 1
         }, 1000)
     }
 
