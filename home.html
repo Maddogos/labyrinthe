@@ -43,9 +43,19 @@
             margin: 20%;
         }
         .go {
-            grid-column: 1;
+            grid-column: 2;
             grid-row: 5;
             border-radius: 10px;
+        }
+        .timing {
+            grid-column: 6;
+            grid-row: 1;
+            font-size: 20px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            border: solid 1px purple;
+            justify-content: center;
+            align-items: center;
+            display: flex;
         }
     </style>
 </head>
@@ -55,13 +65,16 @@
     
             </div>
 
-        <input class="go" type="button" value="GO" onclick="afficheLaby();"><br/><BR><BR>
+        <input class="go" type="button" value="GO" onclick="(() => {afficheLaby(); setTimer()})()"><br/><BR><BR>
+
 
         <!-- ajouter vos boutons de déplacement ici -->
         <button class="haut" onclick="moveCharacter('top')">Haut</button>
         <button class="gauche" onclick="moveCharacter('left')">Gauche</button>
         <button class="droite" onclick="moveCharacter('right')">Droite</button>
         <button class="bas" onclick="moveCharacter('bottom')">Bas</button>
+
+        <p id="timer" class="timing">00:00</p>
         </main>
 </body>
 <script language="JavaScript">
@@ -87,9 +100,6 @@
                 [m,b,m,m,b,m,b,m,m,m],
                 [m,b,b,b,b,m,b,b,b,f],
                 [m,m,m,m,m,m,m,m,m,m]];
- 
-              
-  
      
     function afficheLaby() //ne rien modifier dans cette fonction
     {
@@ -140,6 +150,24 @@
         leLaby.innerHTML=insertion;
     }
 
+    function setTimer() {
+        const departMinutes = 0.001
+        let temps = departMinutes * 60
+
+        const timerElement = document.getElementById("timer")
+
+        setInterval(() => {
+        let minutes = parseInt(temps / 60, 10)
+        let secondes = parseInt(temps % 60, 10)
+
+        minutes = minutes < 10 ? "0" + minutes : minutes
+        secondes = secondes < 10 ? "0" + secondes : secondes
+
+        timerElement.innerText = `${minutes}:${secondes}`
+        temps = temps <= 0 ? 0 : temps + 1
+        }, 1000)
+    }
+
 function getCharPos () {
     for (let ligne of laby) {
         if (ligne.includes(p)) {
@@ -185,6 +213,5 @@ document.addEventListener('keydown', event => {
         // compléter événement de connerie
     }
 })
-
 </script>
 </html>
