@@ -57,6 +57,12 @@
             align-items: center;
             display: flex;
         }
+        .nb-pas {
+            text-align: center;
+            grid-row: 1;
+            grid-column: 7;
+            font-size: 1.3em;
+        }
     </style>
 </head>
     <body>
@@ -65,7 +71,7 @@
     
             </div>
 
-        <input class="go" type="button" value="GO" onclick="(() => {afficheLaby(); setTimer()})()"><br/><BR><BR>
+        <input class="go" type="button" value="GO" onclick="init()"><br/><BR><BR>
 
 
         <!-- ajouter vos boutons de déplacement ici -->
@@ -75,6 +81,7 @@
         <button class="bas" onclick="moveCharacter('bottom')">Bas</button>
 
         <p id="timer" class="timing">00:00</p>
+        <p id="nb-pas" class="nb-pas"></p>
         </main>
 </body>
 <script language="JavaScript">
@@ -90,17 +97,34 @@
         39 : "right"
     };
 
+    var chrono;
+    var gameOn = false;
+
     xperso=1; //position initial du personnage sur l'axe X
     yperso=1; //postition initial du personnage sur l'axe Y
     //tableau à double entrée représentant votre labyrinthe, vous pouvez le modifier pour comprendre le fonctionnement
-    var laby = [[m,m,m,m,m,m,m,m,m,m],
+    var laby ;
+    var nbPas;
+    var temps ;
+
+    function init () {
+        nbPas = 0;
+        timerElement.innerText = `00:00`
+        nbPasElement.innerText = ""
+        temps = departMinutes * 60;
+        laby = [[m,m,m,m,m,m,m,m,m,m],
                 [m,p,m,b,b,b,b,b,b,m],
                 [m,b,b,b,m,m,m,m,b,m],
                 [m,b,m,b,b,b,b,m,b,m],
                 [m,b,m,m,b,m,b,m,m,m],
                 [m,b,b,b,b,m,b,b,b,f],
                 [m,m,m,m,m,m,m,m,m,m]];
-     
+        afficheLaby(); 
+        setTimer(); 
+        gameOn = true;
+
+    }
+
     function afficheLaby() //ne rien modifier dans cette fonction
     {
         var leLaby=document.getElementById("laby");
@@ -150,22 +174,24 @@
         leLaby.innerHTML=insertion;
     }
 
+    const departMinutes = 0.001
+
+    const timerElement = document.getElementById("timer")
+    const nbPasElement = document.getElementById("nb-pas")
+
     function setTimer() {
-        const departMinutes = 0.001
-        let temps = departMinutes * 60
+        if (temps === 0.06) {
+            chrono = setInterval(() => {
+            temps = temps <= 0 ? 0 : temps + 1
+            let minutes = parseInt(temps / 60, 10)
+            let secondes = parseInt(temps % 60, 10)
 
-        const timerElement = document.getElementById("timer")
+            minutes = minutes < 10 ? "0" + minutes : minutes
+            secondes = secondes < 10 ? "0" + secondes : secondes
 
-        setInterval(() => {
-        let minutes = parseInt(temps / 60, 10)
-        let secondes = parseInt(temps % 60, 10)
-
-        minutes = minutes < 10 ? "0" + minutes : minutes
-        secondes = secondes < 10 ? "0" + secondes : secondes
-
-        timerElement.innerText = `${minutes}:${secondes}`
-        temps = temps <= 0 ? 0 : temps + 1
-        }, 1000)
+            timerElement.innerText = `${minutes}:${secondes}`
+            }, 1000)
+        }
     }
 
 function getCharPos () {
@@ -195,19 +221,22 @@ function moveCharacter(direction) {
             break;
     }
     destination = laby[destinationPos.y][destinationPos.x]
-    if (destination === b) {
+    if (destination === b || destination === f) {
         laby[destinationPos.y][destinationPos.x] = p;
         laby[charPos.y][charPos.x] = b;
-    } else if (destination === f) {
-        laby[destinationPos.y][destinationPos.x] = p;
-        laby[charPos.y][charPos.x] = b;
-        // compléter événement de victoire
+        nbPas += 1
+    }
+    if (destination === f) {
+        gameOn = false
+        clearInterval(chrono)
+        console.log(nbPas)
+        nbPasElement.innerText = "Nombre de pas\n" + nbPas
     };  
     afficheLaby()
 }
 
-document.addEventListener('keydown', event => {
-    if (event.keyCode in moveKeys) {
+var keyPress = document.addEventListener('keydown', event => {
+    if ((event.keyCode in moveKeys) && (gameOn === true)) {
         moveCharacter(moveKeys[event.keyCode])
     } else {
         // compléter événement de connerie
