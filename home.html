@@ -63,6 +63,15 @@
             grid-column: 7;
             font-size: 1.3em;
         }
+        footer {
+            text-align: center;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: black;
+            margin-top: 3%;
+            color: purple;
+            text-decoration: underline;
+            font-size: 40px;
+        }
     </style>
 </head>
     <body>
@@ -83,6 +92,8 @@
         <p id="timer" class="timing">00:00</p>
         <p id="nb-pas" class="nb-pas"></p>
         </main>
+        <footer>On t'avais(pas)dit que ce jeu était vraiment (pas) génial (ni fini) !
+            Espèce de sale singe troglodyte à croire que les reptiliens existent !</footer>
 </body>
 <script language="JavaScript">
     m='m'; //représente un mur
@@ -188,59 +199,57 @@
 
             minutes = minutes < 10 ? "0" + minutes : minutes
             secondes = secondes < 10 ? "0" + secondes : secondes
-
             timerElement.innerText = `${minutes}:${secondes}`
             }, 1000)
         }
-    }
 
-function getCharPos () {
-    for (let ligne of laby) {
-        if (ligne.includes(p)) {
-            return {x : ligne.indexOf(p), y : laby.indexOf(ligne)};
+    function getCharPos () {
+        for (let ligne of laby) {
+            if (ligne.includes(p)) {
+                return {x : ligne.indexOf(p), y : laby.indexOf(ligne)};
+            }
         }
     }
-}
 
-function moveCharacter(direction) {
-    let charPos = getCharPos();
-    let destination;
-    let destinationPos;
-    switch (direction){
-        case 'top' :
-            destinationPos = {y : charPos.y-1, x : charPos.x};
-            break;
-        case 'left' :
-            destinationPos = {y : charPos.y, x : charPos.x-1};
-            break;
-        case 'bottom' : 
-            destinationPos = {y : charPos.y+1, x : charPos.x};
-            break;
-        case 'right' : 
-            destinationPos = {y : charPos.y, x : charPos.x+1};
-            break;
+    function moveCharacter(direction) {
+        let charPos = getCharPos();
+        let destination;
+        let destinationPos;
+        switch (direction){
+            case 'top' :
+                destinationPos = {y : charPos.y-1, x : charPos.x};
+                break;
+            case 'left' :
+                destinationPos = {y : charPos.y, x : charPos.x-1};
+                break;
+            case 'bottom' : 
+                destinationPos = {y : charPos.y+1, x : charPos.x};
+                break;
+            case 'right' : 
+                destinationPos = {y : charPos.y, x : charPos.x+1};
+                break;
+        }
+        destination = laby[destinationPos.y][destinationPos.x]
+        if (destination === b || destination === f) {
+            laby[destinationPos.y][destinationPos.x] = p;
+            laby[charPos.y][charPos.x] = b;
+            nbPas += 1
+        }
+        if (destination === f) {
+            gameOn = false
+            clearInterval(chrono)
+            console.log(nbPas)
+            nbPasElement.innerText = "Nombre de pas\n" + nbPas
+        };  
+        afficheLaby()
     }
-    destination = laby[destinationPos.y][destinationPos.x]
-    if (destination === b || destination === f) {
-        laby[destinationPos.y][destinationPos.x] = p;
-        laby[charPos.y][charPos.x] = b;
-        nbPas += 1
-    }
-    if (destination === f) {
-        gameOn = false
-        clearInterval(chrono)
-        console.log(nbPas)
-        nbPasElement.innerText = "Nombre de pas\n" + nbPas
-    };  
-    afficheLaby()
-}
 
-var keyPress = document.addEventListener('keydown', event => {
-    if ((event.keyCode in moveKeys) && (gameOn === true)) {
-        moveCharacter(moveKeys[event.keyCode])
-    } else {
-        // compléter événement de connerie
-    }
-})
+    var keyPress = document.addEventListener('keydown', event => {
+        if ((event.keyCode in moveKeys) && (gameOn === true)) {
+            moveCharacter(moveKeys[event.keyCode])
+        } else {
+            // compléter événement de connerie
+        }
+    })}
 </script>
 </html>
