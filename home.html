@@ -3,109 +3,7 @@
 <html>
 <head>
     <title>Labyrinthe</title>
-    <script language="JavaScript">
-        m='m'; //représente un mur
-        p='p'; //représente le personnage
-        b='b'; //représente le chemin
-        f="f"; //représente le trophée 
-
-        xperso=1; //position initial du personnage sur l'axe X
-        yperso=1; //postition initial du personnage sur l'axe Y
-        //tableau à double entrée représentant votre labyrinthe, vous pouvez le modifier pour comprendre le fonctionnement
-        var laby = [[m,m,m,m,m,m,m,m,m,m],
-                    [m,p,m,b,b,b,b,b,b,m],
-                    [m,b,b,b,m,m,m,m,b,m],
-                    [m,b,m,b,b,b,b,m,b,m],
-                    [m,b,m,m,b,m,b,m,m,m],
-                    [m,b,b,b,b,m,b,b,b,f],
-                    [m,m,m,m,m,m,m,m,m,m]];
-     
-                  
-      
-         
-        function afficheLaby() //ne rien modifier dans cette fonction
-        {
-            var leLaby=document.getElementById("laby");
-            insertion="<table border=0 cellspacing=0 cellpadding=0>";
-         
-         
-            for(i=0;i<7;i++)
-            {
-            insertion+="<tr>";
-                for(j=0;j<10;j++)
-                {
-                 
-                    if (laby[i][j]==m)
-                    {
-                    insertion+="<td>";
-                    insertion+="<img width='52'height='52' src='Assets/stonewall.png'>";
-                    insertion+="</td>";
-                    }
-                    if (laby[i][j]==p)
-                    {
-                    insertion+="<td>";
-                    insertion+="<img width='52' height='52' style='background-image:Assets/Ground.png' src='Assets/Heros.png'>";
-                    insertion+="</td>";
-                    }
-                    if (laby[i][j]==b)
-                    {
-                    insertion+="<td>";
-                    insertion+="<img width='52' height='52' src='Assets/Ground.png'>";
-                    insertion+="</td>";
-                    }
-
-                     
-                    if (laby[i][j]==f)
-                    {
-                    insertion+="<td>";
-                    insertion+="<img width='52' height='52'src='Assets/Trophy.png'>";
-                    insertion+="</td>";
-                    }
-                     
-             
-                     
-                }
-                insertion+="</tr>";
-            }  
-             
-            insertion+="</table>";
-            leLaby.innerHTML=insertion;
-        }
-
-    function getCharPos () {
-        for (let ligne of laby) {
-            if (ligne.includes("p")) {
-                return {x : ligne.indexOf("p"), y : laby.indexOf(ligne)};
-            }
-        }
-    }
     
-    function moveCharacter(direction) {
-        let charPos = getCharPos();
-        let destination;
-        let destinationPos;
-        switch (direction){
-            case 'top' :
-                destinationPos = {y : charPos.y-1, x : charPos.x};
-                break;
-            case 'left' :
-                destinationPos = {y : charPos.y, x : charPos.x-1};
-                break;
-            case 'bottom' : 
-                destinationPos = {y : charPos.y+1, x : charPos.x};
-                break;
-            case 'right' : 
-                destinationPos = {y : charPos.y, x : charPos.x+1};
-                break;
-        }
-        destination = laby[destinationPos.y][destinationPos.x]
-        if (destination === "b") {
-            laby[destinationPos.y][destinationPos.x] = "p";
-            laby[charPos.y][charPos.x] = "b";
-        };
-        afficheLaby()
-    }
-    </script>
     <style>
         .main {
             display: flex;
@@ -166,4 +64,127 @@
         <button class="bas" onclick="moveCharacter('bottom')">Bas</button>
         </main>
 </body>
+<script language="JavaScript">
+    m='m'; //représente un mur
+    p='p'; //représente le personnage
+    b='b'; //représente le chemin
+    f="f"; //représente le trophée 
+
+    moveKeys = {
+        38 : "top",
+        37 : "left",
+        40 : "bottom",
+        39 : "right"
+    };
+
+    xperso=1; //position initial du personnage sur l'axe X
+    yperso=1; //postition initial du personnage sur l'axe Y
+    //tableau à double entrée représentant votre labyrinthe, vous pouvez le modifier pour comprendre le fonctionnement
+    var laby = [[m,m,m,m,m,m,m,m,m,m],
+                [m,p,m,b,b,b,b,b,b,m],
+                [m,b,b,b,m,m,m,m,b,m],
+                [m,b,m,b,b,b,b,m,b,m],
+                [m,b,m,m,b,m,b,m,m,m],
+                [m,b,b,b,b,m,b,b,b,f],
+                [m,m,m,m,m,m,m,m,m,m]];
+ 
+              
+  
+     
+    function afficheLaby() //ne rien modifier dans cette fonction
+    {
+        var leLaby=document.getElementById("laby");
+        insertion="<table border=0 cellspacing=0 cellpadding=0>";
+     
+     
+        for(i=0;i<7;i++)
+        {
+        insertion+="<tr>";
+            for(j=0;j<10;j++)
+            {
+             
+                if (laby[i][j]==m)
+                {
+                insertion+="<td>";
+                insertion+="<img width='52'height='52' src='Assets/stonewall.png'>";
+                insertion+="</td>";
+                }
+                if (laby[i][j]==p)
+                {
+                insertion+="<td>";
+                insertion+="<img width='52' height='52' style='background-image:Assets/Ground.png' src='Assets/Heros.png'>";
+                insertion+="</td>";
+                }
+                if (laby[i][j]==b)
+                {
+                insertion+="<td>";
+                insertion+="<img width='52' height='52' src='Assets/Ground.png'>";
+                insertion+="</td>";
+                }
+
+                 
+                if (laby[i][j]==f)
+                {
+                insertion+="<td>";
+                insertion+="<img width='52' height='52'src='Assets/Trophy.png'>";
+                insertion+="</td>";
+                }
+                 
+         
+                 
+            }
+            insertion+="</tr>";
+        }  
+         
+        insertion+="</table>";
+        leLaby.innerHTML=insertion;
+    }
+
+function getCharPos () {
+    for (let ligne of laby) {
+        if (ligne.includes(p)) {
+            return {x : ligne.indexOf(p), y : laby.indexOf(ligne)};
+        }
+    }
+}
+
+function moveCharacter(direction) {
+    let charPos = getCharPos();
+    let destination;
+    let destinationPos;
+    switch (direction){
+        case 'top' :
+            destinationPos = {y : charPos.y-1, x : charPos.x};
+            break;
+        case 'left' :
+            destinationPos = {y : charPos.y, x : charPos.x-1};
+            break;
+        case 'bottom' : 
+            destinationPos = {y : charPos.y+1, x : charPos.x};
+            break;
+        case 'right' : 
+            destinationPos = {y : charPos.y, x : charPos.x+1};
+            break;
+    }
+    destination = laby[destinationPos.y][destinationPos.x]
+    if (destination === b) {
+        laby[destinationPos.y][destinationPos.x] = p;
+        laby[charPos.y][charPos.x] = b;
+    } else if (destination === f) {
+        laby[destinationPos.y][destinationPos.x] = p;
+        laby[charPos.y][charPos.x] = b;
+        // compléter événement de victoire
+    };  
+    afficheLaby()
+}
+
+document.addEventListener('keydown', event => {
+    if (event.keyCode in moveKeys) {
+        moveCharacter(moveKeys[event.keyCode])
+    } else {
+        // compléter événement de connerie
+    }
+})
+
+</script>
 </html>
