@@ -61,7 +61,7 @@
             text-align: center;
             grid-row: 1;
             grid-column: 7;
-            font-size: 1.3em;
+            font-size: 1.2em;
         }
         footer {
             text-align: center;
@@ -71,6 +71,26 @@
             color: purple;
             text-decoration: underline;
             font-size: 40px;
+        }
+        tr {
+            display: flex;
+        }
+        td {
+            display:block
+        }
+        img{
+            box-sizing: content-box;
+            background-color: green;
+        }
+        .b:hover img, .f:hover img{
+            filter:hue-rotate(325deg)
+        }
+        .valid:hover img{
+            filter:hue-rotate(45deg)
+
+        }
+        .p:hover img{
+            filter:hue-rotate(180deg)
         }
     </style>
 </head>
@@ -141,6 +161,7 @@
                 [m,m,m,m,m,m,m,m,m,m]];
         afficheLaby(); 
         setTimer(); 
+        listeners(getCasesPos())
         gameOn = true;
 
     }
@@ -156,42 +177,100 @@
         insertion+="<tr>";
             for(j=0;j<10;j++)
             {
-             
                 if (laby[i][j]==m)
                 {
-                insertion+="<td>";
+                insertion+="<td class='m'>";
                 insertion+="<img width='52'height='52' src='Assets/stonewall.png'>";
                 insertion+="</td>";
                 }
                 if (laby[i][j]==p)
                 {
-                insertion+="<td>";
+                insertion+="<td class='p'>";
                 insertion+="<img width='52' height='52' style='background-image:Assets/Ground.png' src='Assets/Heros.png'>";
                 insertion+="</td>";
                 }
                 if (laby[i][j]==b)
                 {
-                insertion+="<td>";
+                insertion+="<td class='b'>";
                 insertion+="<img width='52' height='52' src='Assets/Ground.png'>";
                 insertion+="</td>";
                 }
-
-                 
                 if (laby[i][j]==f)
                 {
-                insertion+="<td>";
-                insertion+="<img width='52' height='52'src='Assets/Trophy.png'>";
+                insertion+="<td class='f'>";
+                insertion+="<img width='52' height='52' src='Assets/Trophy.png'>";
                 insertion+="</td>";
                 }
                  
-         
-                 
             }
             insertion+="</tr>";
+
         }  
-         
         insertion+="</table>";
         leLaby.innerHTML=insertion;
+        
+    }
+
+    function getCasesPos () {
+        let trList = Object.values(document.querySelectorAll("tr"));
+        let tabResult = [];
+
+        for (let i = 0; i < trList.length; i++) {
+            let tdList = Object.values(trList[i].querySelectorAll("td"));
+            let ligneResult = [];
+
+            for (let j = 0; j < tdList.length; j++) {
+                let objectInser = {HTMLObject : tdList[j], content : laby[i][j], x : j, y : i};
+                ligneResult.push(objectInser)
+            }
+
+            tabResult.push(ligneResult)
+        }
+
+        return tabResult
+
+    }
+
+    function listeners (tab) {
+        for (let i = 0; i < tab.length; i++) {
+            for (let j = 0; j < tab[i].length; j++) {
+                let currentCase = tab[i][j]
+
+                let charPos = getCharPos();
+                let xDiff = currentCase.x - charPos.x;
+                let yDiff = currentCase.y - charPos.y;
+
+                let direction;
+
+                switch ([xDiff, yDiff].join('')){
+                    case '10' :
+                        direction = 'right'
+                        if ((currentCase.content === 'b') || (currentCase.content === 'f')) {currentCase.HTMLObject.classList.add('valid')}
+                        break;
+
+                    case '-10' :
+                        direction = 'left'
+                        if ((currentCase.content === 'b') || (currentCase.content === 'f')) {currentCase.HTMLObject.classList.add('valid')}
+                        break;
+
+                    case '01' : 
+                        direction = 'bottom'
+                        if ((currentCase.content === 'b') || (currentCase.content === 'f')) {currentCase.HTMLObject.classList.add('valid')}
+                        break;
+
+                    case '0-1' : 
+                        direction = 'top'
+                        if ((currentCase.content === 'b') || (currentCase.content === 'f')) {currentCase.HTMLObject.classList.add('valid')}
+                        break;
+                        }
+                if (direction) {   
+                    currentCase.HTMLObject.addEventListener('click', () => {
+                            moveCharacter(direction)
+                        }
+                    )
+                }
+            }
+        }
     }
 
     const departMinutes = 0.001
@@ -221,40 +300,42 @@
     }
 
     function moveCharacter(direction) {
-        let charPos = getCharPos();
-        let destination;
-        let destinationPos;
-        switch (direction){
-            case 'top' :
-                destinationPos = {y : charPos.y-1, x : charPos.x};
-                break;
-            case 'left' :
-                destinationPos = {y : charPos.y, x : charPos.x-1};
-                break;
-            case 'bottom' : 
-                destinationPos = {y : charPos.y+1, x : charPos.x};
-                break;
-            case 'right' : 
-                destinationPos = {y : charPos.y, x : charPos.x+1};
-                break;
+        if (gameOn === true) {
+            let charPos = getCharPos();
+            let destination;
+            let destinationPos;
+            switch (direction){
+                case 'top' :
+                    destinationPos = {y : charPos.y-1, x : charPos.x};
+                    break;
+                case 'left' :
+                    destinationPos = {y : charPos.y, x : charPos.x-1};
+                    break;
+                case 'bottom' : 
+                    destinationPos = {y : charPos.y+1, x : charPos.x};
+                    break;
+                case 'right' : 
+                    destinationPos = {y : charPos.y, x : charPos.x+1};
+                    break;
+            }
+            destination = laby[destinationPos.y][destinationPos.x]
+            if (destination === b || destination === f) {
+                laby[destinationPos.y][destinationPos.x] = p;
+                laby[charPos.y][charPos.x] = b;
+                nbPas += 1
+            }
+            if (destination === f) {
+                gameOn = false
+                clearInterval(chrono)
+                nbPasElement.innerText = "Nombre de pas\n" + nbPas
+            };  
+            afficheLaby()
+            listeners(getCasesPos())
         }
-        destination = laby[destinationPos.y][destinationPos.x]
-        if (destination === b || destination === f) {
-            laby[destinationPos.y][destinationPos.x] = p;
-            laby[charPos.y][charPos.x] = b;
-            nbPas += 1
-        }
-        if (destination === f) {
-            gameOn = false
-            clearInterval(chrono)
-            console.log(nbPas)
-            nbPasElement.innerText = "Nombre de pas\n" + nbPas
-        };  
-        afficheLaby()
     }
 
     var keyPress = document.addEventListener('keydown', event => {
-        if ((event.keyCode in moveKeys) && (gameOn === true)) {
+        if (event.keyCode in moveKeys) {
             moveCharacter(moveKeys[event.keyCode])
         } else {
             // compléter événement de connerie
