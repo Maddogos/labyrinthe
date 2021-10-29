@@ -96,12 +96,12 @@
             Espèce de sale singe troglodyte à croire que les reptiliens existent !</footer>
 </body>
 <script language="JavaScript">
-    m='m'; //représente un mur
-    p='p'; //représente le personnage
-    b='b'; //représente le chemin
-    f="f"; //représente le trophée 
+    const m='m'; //représente un mur
+    const p='p'; //représente le personnage
+    const b='b'; //représente le chemin
+    const f="f"; //représente le trophée 
 
-    moveKeys = {
+    const moveKeys = {
         38 : "top",
         37 : "left",
         40 : "bottom",
@@ -114,11 +114,20 @@
     xperso=1; //position initial du personnage sur l'axe X
     yperso=1; //postition initial du personnage sur l'axe Y
     //tableau à double entrée représentant votre labyrinthe, vous pouvez le modifier pour comprendre le fonctionnement
-    var laby ;
+    var laby = [[m,m,m,m,m,m,m,m,m,m],
+                [m,p,m,b,b,b,b,b,b,m],
+                [m,b,b,b,m,m,m,m,b,m],
+                [m,b,m,b,b,b,b,m,b,m],
+                [m,b,m,m,b,m,b,m,m,m],
+                [m,b,b,b,b,m,b,b,b,f],
+                [m,m,m,m,m,m,m,m,m,m]];
     var nbPas;
     var temps ;
 
     function init () {
+        try {
+            clearInterval(chrono)
+        } catch {}
         nbPas = 0;
         timerElement.innerText = `00:00`
         nbPasElement.innerText = ""
